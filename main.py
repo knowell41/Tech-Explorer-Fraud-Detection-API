@@ -13,6 +13,6 @@ app = FastAPI()
 @app.get("/")
 def read_root():
     context = {}
-    context["BUCKET_NAME"] = BUCKET_NAME
+    context["status"] = True
     return context
 
