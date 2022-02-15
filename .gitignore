@@ -1,0 +1,7 @@
+__pycache__
+*.Identifier
+*.ipynb_checkpoints/
+jupyter/*.jpg
+env
+env*
+env/*
