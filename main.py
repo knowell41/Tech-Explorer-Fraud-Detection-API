@@ -14,5 +14,6 @@ app = FastAPI()
 def read_root():
     context = {}
     context["status"] = True
+    context["message"] = "You've reach Team Tech Explorer's Endpoint"
     return context
 
