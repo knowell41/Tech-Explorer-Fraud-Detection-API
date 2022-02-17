@@ -5,12 +5,11 @@ import os
 import pandas as pd
 from sklearn.preprocessing import LabelEncoder
 import datetime
-
-# import cloudstorage
-# from google.appengine.api import app_identity
+from google.cloud import storage
 
 BASE_DIR = os.getcwd()
 fraud_detection_model = load_model(f"{BASE_DIR}/model/fraud_detection_model_v1.h5")
+CLOUD_STORAGE_BUCKET = os.environ['CLOUD_STORAGE_BUCKET']
 
 app = FastAPI()
 label = LabelEncoder()
@@ -43,13 +42,25 @@ def read_root():
 
 @app.post("/detect-fraud")
 def detect_fraud(logs: UploadFile = File(...)):
-    # try:
+    context = {}
     contentbyte = logs.file.read()
-    suffix_ = datetime.datetime.now().strftime("%Y%m%d%H%M%S%f")
-    filename = f"upload_{suffix_}.csv"
-    with open(f"./static/uploads/{filename}", 'wb') as f:
-        f.write(contentbyte)
-    que_data = pd.read_csv(f"./static/uploads/{filename}")
+    gcs = storage.Client()
+    bucket = gcs.get_bucket(CLOUD_STORAGE_BUCKET)
+    filename = logs.filename
+    blob = bucket.blob(filename)
+    blob.upload_from_string(
+        contentbyte,
+        content_type=logs.content_type
+    )
+    context["uploaded_file_url"] = blob.public_url
+
+    # filename = f"upload_{suffix_}.csv"
+    # with open(f"./static/uploads/{filename}", 'wb') as f:
+    #     f.write(contentbyte)
+    # que_data = pd.read_csv(f"./static/uploads/{filename}")
+    gcs_file = gcs.open(filename)
+    # contents = gcs_file.read()
+    que_data = pd.read_csv(gcs_file)
     X_, _ = preprocess_(que_data)
     predicted_ = (fraud_detection_model.predict(X_)>0.5).astype("int32")
     X_["prediction"] = predicted_

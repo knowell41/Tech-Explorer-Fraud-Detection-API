@@ -140,3 +140,4 @@ websockets==10.1
 Werkzeug==2.0.1
 widgetsnbextension==3.5.1
 wrapt==1.12.1
+google-cloud-storage==1.43.0
