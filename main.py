@@ -58,9 +58,11 @@ def detect_fraud(logs: UploadFile = File(...)):
     # with open(f"./static/uploads/{filename}", 'wb') as f:
     #     f.write(contentbyte)
     # que_data = pd.read_csv(f"./static/uploads/{filename}")
-    gcs_file = gcs.open(filename)
+    blob_open = bucket.get_blob(filename)
+    your_file_contents = blob_open.download_as_string()
+
     # contents = gcs_file.read()
-    que_data = pd.read_csv(gcs_file)
+    que_data = pd.read_csv(your_file_contents)
     X_, _ = preprocess_(que_data)
     predicted_ = (fraud_detection_model.predict(X_)>0.5).astype("int32")
     X_["prediction"] = predicted_
