@@ -47,9 +47,9 @@ def detect_fraud(logs: UploadFile = File(...)):
         contentbyte = logs.file.read()
         suffix_ = datetime.datetime.now().strftime("%Y%m%d%H%M%S%f")
         filename = f"upload_{suffix_}.csv"
-        with open(f"./uploads/{filename}", 'wb') as f:
+        with open(f"./static/uploads/{filename}", 'wb') as f:
             f.write(contentbyte)
-        que_data = pd.read_csv(f"./uploads/{filename}")
+        que_data = pd.read_csv(f"./static/uploads/{filename}")
         X_, _ = preprocess_(que_data)
         predicted_ = (fraud_detection_model.predict(X_)>0.5).astype("int32")
         X_["prediction"] = predicted_

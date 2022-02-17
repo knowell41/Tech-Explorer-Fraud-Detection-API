@@ -1,3 +1,9 @@
 runtime: python37
 entrypoint: gunicorn -w 4 -k uvicorn.workers.UvicornWorker main:app
 instance_class: F4
+handlers:
+- url: /uploads
+  static_dir: static/uploads
+  http_headers:
+    Access-Control-Allow-Origin: *
+  # ...
