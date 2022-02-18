@@ -5,3 +5,7 @@ jupyter/*.jpg
 env
 env*
 env/*
+dataset/
+dataset/*
+uploads/
+uploads/*
